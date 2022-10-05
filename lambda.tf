@@ -21,7 +21,7 @@ EOF
 resource "aws_lambda_function" "test_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = data.archive_file.lambda_deployment.output_path
+  filename      = data.archive_file.hello-world_deployment.output_path
   function_name = "hello_world"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "hello.lambda_handler"
@@ -29,13 +29,36 @@ resource "aws_lambda_function" "test_lambda" {
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
   # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
-  source_code_hash = data.archive_file.lambda_deployment.output_base64sha256
+  source_code_hash = data.archive_file.hello-world_deployment.output_base64sha256
 
   runtime = "python3.9"
 }
 
-data "archive_file" "lambda_deployment" {
+data "archive_file" "hello-world_deployment" {
   type        = "zip"
   source_file = "${path.module}/src/hello.py"
   output_path = "${path.module}/files/hello.zip"
+}
+
+#tic-tac-toe game
+resource "aws_lambda_function" "tic-tac-toe" {
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = data.archive_file.tic-tac-toe_deployment.output_path
+  function_name = "tic-tac-toe"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "tic-tac-toe.lambda_handler"
+
+  # The filebase64sha256() function is available in Terraform 0.11.12 and later
+  # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
+  # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
+  source_code_hash = data.archive_file.tic-tac-toe_deployment.output_base64sha256
+
+  runtime = "python3.9"
+}
+
+data "archive_file" "tic-tac-toe_deployment" {
+  type        = "zip"
+  source_file = "${path.module}/src/lambda_funtion.py"
+  output_path = "${path.module}/files/tic-tac-toe.zip"
 }
